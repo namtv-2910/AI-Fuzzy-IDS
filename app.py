@@ -38,13 +38,14 @@ st.markdown("""
     .metric-card  { background:#f8f9fa; border-radius:12px; padding:1rem;
                     border-left:4px solid #3498db; margin-bottom:0.5rem; }
     .alert-low      { background:#d5f5e3; border-left:4px solid #2ecc71;
-                      padding:1rem; border-radius:8px; }
+                      padding:1rem; border-radius:8px; color: #1e8449; }
     .alert-medium   { background:#fef9e7; border-left:4px solid #f1c40f;
-                      padding:1rem; border-radius:8px; }
+                      padding:1rem; border-radius:8px; color: #b7950b; }
     .alert-high     { background:#fdebd0; border-left:4px solid #e67e22;
-                      padding:1rem; border-radius:8px; }
+                      padding:1rem; border-radius:8px; color: #b9770e; }
     .alert-critical { background:#fadbd8; border-left:4px solid #e74c3c;
-                      padding:1rem; border-radius:8px; }
+                      padding:1rem; border-radius:8px; color: #922b21; }
+    .pipeline-step  { background: #ffffff; border: 1px solid #e1e8ed; border-radius: 8px; padding: 12px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
 </style>
 """, unsafe_allow_html=True)
 
@@ -67,8 +68,7 @@ def run_ml(_df):
 
 # ─────────────────────────── Sidebar ──────────────────────────────────
 with st.sidebar:
-    st.image('https://img.icons8.com/fluency/96/shield.png', width=80)
-    st.markdown('## 🛡️ Fuzzy IDS')
+    st.markdown("## 🛡️ Fuzzy IDS")
     st.markdown('*Phát hiện bất thường mạng bằng Fuzzy Logic*')
     st.divider()
     page = st.radio('📋 Điều hướng', [
@@ -96,19 +96,48 @@ if page == '🏠 Trang chủ':
     col4.metric('🎯 Mức cảnh báo', '4 cấp')
 
     st.divider()
-    st.markdown('### 🔄 Quy trình hoạt động')
-    st.image('https://mermaid.ink/img/pako:eNpVkMFqwzAMhl_F-JRC3iCHHVZa2G2ww2CHXoStJF5tK9hyIIS8-5ymGxuGQH_-T7-krJCFVFCQaEiXJG-xfAcFG-0E4gj3FNrxTkMI7pGRR2rh2X2HjSfLKVwL8gS-o5VqJtRBzidCY4kL7cA5F3YJPuBk3zHGiOicqhWPdl98NONkHiuKL1r5jNGCvEYKlTkdAfVbIR6YqHSk3S4yjqnIMhf3v6YnLMk6C7W-oFH5-nxHp6jbhSSQA_iSV4xWx6EJ1LGMJJjvPJNd38h6p2BrjcmTkwQgJzikuuIiLLxBkSR-B-Q_Y2uMx', use_container_width=True)
+    st.markdown('### 🔄 Quy trình hoạt động (Mamdani Inference Pipeline)')
+    
+    p1, p2, p3, p4 = st.columns(4)
+    with p1:
+        st.markdown("""
+        <div class="pipeline-step">
+            <h4>1. Fuzzification</h4>
+            <p>Chuyển đổi dữ liệu số đo (packet, login, port, vol) thành độ thuộc mờ (Low, Med, High).</p>
+        </div>
+        """, unsafe_allow_html=True)
+    with p2:
+        st.markdown("""
+        <div class="pipeline-step">
+            <h4>2. Rule Evaluation</h4>
+            <p>Khớp 15 luật IF-THEN chuyên gia với các toán tử mờ AND (min), OR (max).</p>
+        </div>
+        """, unsafe_allow_html=True)
+    with p3:
+        st.markdown("""
+        <div class="pipeline-step">
+            <h4>3. Aggregation</h4>
+            <p>Tổng hợp các tập mờ đầu ra từ tất cả luật được kích hoạt.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    with p4:
+        st.markdown("""
+        <div class="pipeline-step">
+            <h4>4. Defuzzification</h4>
+            <p>Giải mờ theo phương pháp Trọng tâm (Centroid) cho ra điểm nguy hiểm (0-100).</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-    st.markdown('### 🗂️ Tính năng')
+    st.markdown('### 🗂️ Tính năng chính')
     c1, c2 = st.columns(2)
     with c1:
         st.success('✅ Phân tích traffic mạng theo thời gian thực')
-        st.success('✅ Giải thích lý do cảnh báo (Explainable AI)')
-        st.success('✅ So sánh với 4 mô hình ML truyền thống')
+        st.success('✅ Giải thích lý do cảnh báo rõ ràng (Explainable AI)')
+        st.success('✅ So sánh đa chiều với 4 thuật toán Machine Learning')
     with c2:
-        st.info('📊 Trực quan hoá hàm thuộc Fuzzy')
-        st.info('📈 Biểu đồ phân tích dữ liệu')
-        st.info('🧠 Hướng dẫn lý thuyết Fuzzy Logic')
+        st.info('📊 Trực quan hoá các hàm thuộc (Membership Functions)')
+        st.info('📈 Phân tích dữ liệu luồng mạng trực quan qua biểu đồ tương tác')
+        st.info('🧠 Tích hợp tài liệu lý thuyết Logic Mờ học thuật')
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -116,46 +145,58 @@ if page == '🏠 Trang chủ':
 # ═══════════════════════════════════════════════════════════════════════
 elif page == '🔍 Phân tích đơn':
     st.markdown('## 🔍 Phân tích Traffic Mạng')
-    st.markdown('Nhập thông số traffic mạng để hệ thống đánh giá mức độ nguy hiểm.')
+    st.markdown('Nhập thông số traffic mạng hoặc chọn kịch bản mẫu để hệ thống đánh giá mức độ nguy hiểm.')
     st.divider()
 
     fuzzy = load_fuzzy()
 
+    # Khởi tạo session_state cho các slider nếu chưa có
+    if 'packet_rate' not in st.session_state:
+        st.session_state.packet_rate = 100
+    if 'failed_logins' not in st.session_state:
+        st.session_state.failed_logins = 5
+    if 'port_scan_count' not in st.session_state:
+        st.session_state.port_scan_count = 50
+    if 'traffic_volume' not in st.session_state:
+        st.session_state.traffic_volume = 150
+
+    # Callback cập nhật preset
+    def set_preset(pr, fl, ps, tv):
+        st.session_state.packet_rate = pr
+        st.session_state.failed_logins = fl
+        st.session_state.port_scan_count = ps
+        st.session_state.traffic_volume = tv
+
     col1, col2 = st.columns([1, 1])
 
     with col1:
-        st.markdown('### ⚙️ Thông số đầu vào')
+        st.markdown('### 🎯 Kịch bản mẫu (Presets)')
+        c1b, c2b, c3b = st.columns(3)
+        c1b.button('✅ Bình thường', on_click=set_preset, args=(50, 2, 20, 100))
+        c2b.button('⚠️ Nghi ngờ', on_click=set_preset, args=(400, 30, 400, 500))
+        c3b.button('🚨 Tấn công', on_click=set_preset, args=(900, 80, 900, 950))
 
-        pr = st.slider('📡 Tốc độ gói tin (packet/giây)', 0, 1000, 100,
+        st.markdown('### ⚙️ Điều chỉnh thông số đầu vào')
+
+        pr = st.slider('📡 Tốc độ gói tin (packet/giây)', 0, 1000, key='packet_rate',
                        help='Số lượng gói tin mạng mỗi giây')
-        fl = st.slider('🔑 Số lần đăng nhập thất bại', 0, 100, 5,
+        fl = st.slider('🔑 Số lần đăng nhập thất bại', 0, 100, key='failed_logins',
                        help='Số lần login thất bại trong 1 phút')
-        ps = st.slider('🔍 Số port bị quét', 0, 1000, 50,
+        ps = st.slider('🔍 Số port bị quét', 0, 1000, key='port_scan_count',
                        help='Số lượng port bị scan')
-        tv = st.slider('💾 Lưu lượng dữ liệu (MB)', 0, 1000, 150,
+        tv = st.slider('💾 Lưu lượng dữ liệu (MB)', 0, 1000, key='traffic_volume',
                        help='Tổng lưu lượng dữ liệu truyền qua')
 
-        st.divider()
-        st.markdown('**🎯 Thử nhanh:**')
-        c1b, c2b, c3b = st.columns(3)
-        preset = None
-        if c1b.button('✅ Bình thường'):  preset = (50, 2, 20, 100)
-        if c2b.button('⚠️ Nghi ngờ'):    preset = (400, 30, 400, 500)
-        if c3b.button('🚨 Tấn công'):     preset = (900, 80, 900, 950)
-
-        if preset:
-            pr, fl, ps, tv = preset
-
     with col2:
-        st.markdown('### 📊 Kết quả đánh giá')
+        st.markdown('### 📊 Kết quả đánh giá mức độ rủi ro')
         result = fuzzy.predict(pr, fl, ps, tv)
         score  = result['score']
 
         # Gauge chart
         fig = go.Figure(go.Indicator(
-            mode='gauge+number+delta',
+            mode='gauge+number',
             value=score,
-            title={'text': 'Mức độ nguy hiểm', 'font': {'size': 18}},
+            title={'text': 'Điểm Nguy Hiểm (0 - 100)', 'font': {'size': 18}},
             gauge={
                 'axis': {'range': [0, 100]},
                 'bar':  {'color': result['color']},
@@ -169,27 +210,26 @@ elif page == '🔍 Phân tích đơn':
             }
         ))
         fig.update_layout(height=280, margin=dict(t=40, b=0))
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig)
 
         # Alert box
         level_map = {
-            'low':      ('alert-low',      '🟢 BÌNH THƯỜNG',    'Traffic mạng hoạt động bình thường. Không phát hiện dấu hiệu tấn công.'),
-            'medium':   ('alert-medium',   '🟡 CẢNH BÁO THẤP', 'Phát hiện một số dấu hiệu bất thường. Cần theo dõi thêm.'),
-            'high':     ('alert-high',     '🟠 CẢNH BÁO CAO',  'Dấu hiệu tấn công rõ ràng! Nên kiểm tra ngay hệ thống.'),
-            'critical': ('alert-critical', '🔴 NGUY HIỂM!',     'Hệ thống đang bị tấn công! Hành động ngay lập tức!'),
+            'low':      ('alert-low',      '🟢 BÌNH THƯỜNG',    'Traffic mạng hoạt động trong ngưỡng an toàn. Không phát hiện dấu hiệu bất thường.'),
+            'medium':   ('alert-medium',   '🟡 CẢNH BÁO THẤP', 'Phát hiện một số dấu hiệu đáng ngờ. Khuyến nghị theo dõi thêm luồng gói tin.'),
+            'high':     ('alert-high',     '🟠 CẢNH BÁO CAO',  'Dấu hiệu xâm nhập/tấn công rõ rệt! Cần rà soát ngay IP nguồn và tường lửa.'),
+            'critical': ('alert-critical', '🔴 NGUY HIỂM!',     'Hệ thống đang bị tấn công dồn dập (DDoS, Brute force)! Kích hoạt cơ chế phòng vệ ngay.'),
         }
         css_cls, title, msg = level_map[result['level']]
         st.markdown(f'<div class="{css_cls}"><strong>{title}</strong><br>{msg}</div>',
                     unsafe_allow_html=True)
 
-        # Độ thuộc từng biến
         st.divider()
-        st.markdown('**📋 Lý do phân loại (Fuzzy membership):**')
+        st.markdown('**📋 Giải thích suy luận (Fuzzy Membership State):**')
         reasons = {
-            f'packet_rate = {pr}':     ('Thấp' if pr < 350 else 'Trung bình' if pr < 650 else 'Cao'),
-            f'failed_logins = {fl}':   ('Ít' if fl < 25 else 'Vừa' if fl < 60 else 'Nhiều'),
-            f'port_scan = {ps}':       ('Ít' if ps < 300 else 'Vừa' if ps < 650 else 'Nhiều'),
-            f'traffic_volume = {tv}':  ('Nhỏ' if tv < 300 else 'Vừa' if tv < 650 else 'Lớn'),
+            f'Tốc độ gói ({pr} p/s)': ('Thấp' if pr < 350 else 'Trung bình' if pr < 650 else 'Cao'),
+            f'Login thất bại ({fl})': ('Ít' if fl < 25 else 'Vừa' if fl < 60 else 'Nhiều'),
+            f'Port Scan ({ps})': ('Ít' if ps < 300 else 'Vừa' if ps < 650 else 'Nhiều'),
+            f'Lưu lượng ({tv} MB)': ('Nhỏ' if tv < 300 else 'Vừa' if tv < 650 else 'Lớn'),
         }
         for feat, val in reasons.items():
             st.markdown(f'- **{feat}** → `{val}`')
@@ -209,26 +249,25 @@ elif page == '📊 So sánh mô hình':
         fuzzy_result, fuzzy_pred = evaluate_fuzzy(fuzzy, X_raw, y)
         all_results = pd.concat([results, pd.DataFrame([fuzzy_result])], ignore_index=True)
 
-    st.markdown('### 📋 Bảng so sánh')
+    st.markdown('### 📋 Bảng chỉ số đánh giá tổng hợp')
     styled = all_results.style.format({
         'Accuracy': '{:.4f}', 'Precision': '{:.4f}',
         'Recall': '{:.4f}', 'F1-Score': '{:.4f}',
         'CV Mean': '{:.4f}', 'CV Std': '{:.4f}',
     }).highlight_max(subset=['Accuracy', 'F1-Score'], color='#d5f5e3') \
       .highlight_min(subset=['Accuracy', 'F1-Score'], color='#fadbd8')
-    st.dataframe(styled, use_container_width=True)
+    st.dataframe(styled)
 
     st.markdown('### 📊 Biểu đồ so sánh')
     fig = plot_comparison(all_results)
-    st.pyplot(fig, use_container_width=True)
+    st.pyplot(fig)
 
-    st.markdown('### 💡 Nhận xét')
+    st.markdown('### 💡 Nhận xét học thuật')
     best = all_results.loc[all_results['F1-Score'].idxmax(), 'Model']
     st.info(f"""
-    - **Mô hình tốt nhất** (F1-Score): **{best}**
-    - Fuzzy Logic **không cần dữ liệu huấn luyện** — hoạt động dựa trên luật chuyên gia
-    - Fuzzy Logic có ưu thế về **tính giải thích được (Explainability)**
-    - ML models có lợi thế khi có **nhiều dữ liệu chất lượng cao**
+    - **Mô hình có F1-Score cao nhất:** **{best}**
+    - **Fuzzy Logic:** Hoạt động dựa trên tri thức chuyên gia định nghĩa sẵn, không phụ thuộc vào nhãn huấn luyện, cho phép giải thích rõ ràng tại sao traffic bị đánh dấu rủi ro.
+    - **Machine Learning thuần (RF, SVM, KNN, DT):** Đạt độ chính xác định lượng cao trên tập dữ liệu chuẩn, nhưng mang tính chất "hộp đen" khó diễn giải tường minh.
     """)
 
 
@@ -236,11 +275,11 @@ elif page == '📊 So sánh mô hình':
 # TRANG 4 — Phân tích dữ liệu
 # ═══════════════════════════════════════════════════════════════════════
 elif page == '📈 Phân tích dữ liệu':
-    st.markdown('## 📈 Phân tích Dữ liệu Traffic Mạng')
+    st.markdown('## 📈 Phân tích Dữ liệu Traffic Mạng (EDA)')
 
     df = load_data()
-    st.markdown(f'**Dataset:** {len(df)} mẫu — {df["label"].value_counts()[0]} bình thường / {df["label"].value_counts()[1]} tấn công')
-    st.dataframe(df.head(10), use_container_width=True)
+    st.markdown(f'**Tổng số mẫu:** {len(df)} | **Bình thường (0):** {(df["label"] == 0).sum()} | **Tấn công (1):** {(df["label"] == 1).sum()}')
+    st.dataframe(df.head(10))
 
     col1, col2 = st.columns(2)
     with col1:
@@ -249,7 +288,7 @@ elif page == '📈 Phân tích dữ liệu':
                            color_discrete_map={0: '#2ecc71', 1: '#e74c3c'},
                            labels={'label': 'Nhãn', 'packet_rate': 'Packet Rate'},
                            barmode='overlay', opacity=0.7)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig)
 
     with col2:
         fig2 = px.scatter(df, x='packet_rate', y='failed_logins',
@@ -257,41 +296,34 @@ elif page == '📈 Phân tích dữ liệu':
                           title='Packet Rate vs Failed Logins',
                           color_discrete_map={'Bình thường': '#2ecc71', 'Tấn công': '#e74c3c'},
                           opacity=0.6)
-        st.plotly_chart(fig2, use_container_width=True)
+        st.plotly_chart(fig2)
 
     fig3 = px.scatter_matrix(df, dimensions=['packet_rate', 'failed_logins', 'port_scan_count', 'traffic_volume'],
                               color=df['label'].map({0: 'Bình thường', 1: 'Tấn công'}),
                               color_discrete_map={'Bình thường': '#2ecc71', 'Tấn công': '#e74c3c'},
-                              title='Ma trận phân tán các đặc trưng', opacity=0.5)
-    st.plotly_chart(fig3, use_container_width=True)
+                              title='Ma trận phân tán giữa các đặc trưng mạng', opacity=0.5)
+    st.plotly_chart(fig3)
 
 
 # ═══════════════════════════════════════════════════════════════════════
 # TRANG 5 — Lý thuyết Fuzzy
 # ═══════════════════════════════════════════════════════════════════════
 elif page == '🧠 Lý thuyết Fuzzy':
-    st.markdown('## 🧠 Lý thuyết Fuzzy Logic')
+    st.markdown('## 🧠 Cơ sở Lý thuyết Logic Mờ trong An Toàn Mạng')
 
     fuzzy = load_fuzzy()
 
     st.markdown("""
-    ### Fuzzy Logic là gì?
-    **Logic Mờ (Fuzzy Logic)** cho phép giá trị chân lý nằm trong khoảng **[0, 1]**
-    thay vì chỉ True/False như logic nhị phân. Điều này phản ánh sự không chắc chắn
-    trong thế giới thực.
-
-    ### Hệ thống suy luận Mamdani (FIS)
-    1. **Fuzzification** — Chuyển giá trị số thành độ thuộc fuzzy
-    2. **Rule Evaluation** — Áp dụng các luật IF-THEN
-    3. **Aggregation** — Tổng hợp kết quả các luật
-    4. **Defuzzification** — Chuyển kết quả mờ thành giá trị số (Centroid method)
+    ### Khái niệm cơ bản
+    Khác với Logic cổ điển (Boolean Logic) chỉ nhận hai giá trị 0 hoặc 1, **Logic Mờ (Fuzzy Logic)** mở rộng miền chân lý thành đoạn liên tục **[0, 1]**. 
+    Điều này đặc biệt phù hợp trong môi trường an ninh mạng, nơi ranh giới giữa một hành vi "truy cập đột biến hợp lệ" và "tấn công từ chối dịch vụ (DoS)" thường không tuyệt đối.
     """)
 
-    st.markdown('### 📊 Hàm thuộc (Membership Functions)')
+    st.markdown('### 📊 Các hàm thuộc (Membership Functions)')
     fig = fuzzy.plot_membership_functions()
-    st.pyplot(fig, use_container_width=True)
+    st.pyplot(fig)
 
-    st.markdown('### 📋 Các luật Fuzzy IF-THEN trong hệ thống')
+    st.markdown('### 📋 Bảng luật mờ Mamdani (Rule Base)')
     rules_data = [
         ('packet_rate=CAO',   'port_scan=NHIỀU',  '—',              '→ NGUY HIỂM'),
         ('failed_logins=NHIỀU','port_scan=NHIỀU',  '—',              '→ NGUY HIỂM'),
@@ -303,5 +335,5 @@ elif page == '🧠 Lý thuyết Fuzzy':
         ('packet_rate=THẤP',  'failed_logins=ÍT',  'port_scan=ÍT',  '→ THẤP'),
         ('failed_logins=ÍT',  'port_scan=ÍT',      'traffic=NHỎ',   '→ THẤP'),
     ]
-    rules_df = pd.DataFrame(rules_data, columns=['Điều kiện 1', 'Điều kiện 2', 'Điều kiện 3', 'Kết quả'])
-    st.dataframe(rules_df, use_container_width=True)
+    rules_df = pd.DataFrame(rules_data, columns=['Điều kiện 1', 'Điều kiện 2', 'Điều kiện 3', 'Kết luận Nguy Cơ'])
+    st.dataframe(rules_df)
